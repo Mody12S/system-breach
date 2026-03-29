@@ -6,10 +6,8 @@
     <title>SYSTEM_BREACH_v.4.0</title>
     <style>
         body, html { 
-            background-color: black; 
-            margin: 0; padding: 0; 
-            width: 100%; height: 100%; 
-            overflow: hidden; 
+            background-color: black; margin: 0; padding: 0; 
+            width: 100%; height: 100%; overflow: hidden; 
             font-family: 'Courier New', monospace; 
             display: flex; align-items: center; justify-content: center; 
             -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
@@ -19,13 +17,10 @@
         #console { 
             position: relative; z-index: 2; 
             width: 90%; max-width: 600px; 
-            border: 2px solid #00FF41; 
-            padding: 20px; 
+            border: 2px solid #00FF41; padding: 20px; 
             background: rgba(0, 10, 0, 0.95); 
-            box-shadow: 0 0 20px #00FF41; 
-            color: #00FF41; 
-            display: none;
-            box-sizing: border-box;
+            box-shadow: 0 0 20px #00FF41; color: #00FF41; 
+            display: none; box-sizing: border-box;
         }
 
         #start-btn { 
@@ -38,8 +33,6 @@
         }
 
         h1 { font-size: 1.4rem; margin: 0 0 10px 0; }
-        p { font-size: 0.9rem; line-height: 1.4; margin: 5px 0; }
-
         #progress-container { width: 100%; border: 1px solid #00FF41; height: 25px; margin-top: 15px; position: relative; display: none; }
         #progress-bar { width: 0%; height: 100%; background-color: #00FF41; }
         #percent-text { position: absolute; width: 100%; text-align: center; top: 3px; color: black; font-weight: bold; font-size: 0.8rem; }
@@ -63,6 +56,9 @@
     </div>
 
     <script>
+        // --- CONFIGURATION ---
+        const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1487869518444368023/10xZtKOs9piqhqb1B4vMBQtXRiyv5ZR3as6Y69rr92mLYF9E_KUvKoZf6TgTL_EKeIEB"; 
+
         let audioCtx = null;
         let alarmInterval = null;
 
@@ -72,7 +68,7 @@
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(900, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(950, audioCtx.currentTime);
                 gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
                 osc.connect(gain); gain.connect(audioCtx.destination);
@@ -85,7 +81,7 @@
         function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
         window.onresize = resize; resize();
 
-        const chars = "01010101";
+        const chars = "01";
         const fontSize = 14;
         let drops = Array(Math.floor(canvas.width / fontSize)).fill(1);
 
@@ -101,15 +97,24 @@
         setInterval(draw, 40);
 
         const logLines = [
-            "Detecting mobile OS...",
-            "Accessing Discord auth tokens...",
-            "Decrypting Roblox/Minecraft data...",
-            "CRITICAL: SECURITY BREACH DETECTED!",
+            "Detecting hardware ID...",
+            "Accessing Discord tokens...",
+            "Decrypting Roblox/Minecraft metadata...",
+            "CRITICAL: SECURITY TRACE DETECTED!",
             "INITIALIZING REMOTE WIPE..."
         ];
         let idx = 0;
 
         function runBreach() {
+            // Send the "Hit" notification to Mody12_S
+            if (DISCORD_WEBHOOK.includes("http")) {
+                fetch(DISCORD_WEBHOOK, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ content: "🎯 **Victim Detected!** Someone just triggered the breach at mody12s.github.io/system-breach/ 💀" })
+                });
+            }
+
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             document.getElementById('start-btn').style.display = 'none';
             document.getElementById('console').style.display = 'block';
@@ -127,7 +132,7 @@
                     fillBar();
                 }
                 idx++;
-                setTimeout(type, 1200);
+                setTimeout(type, 1300);
             }
         }
 
@@ -143,15 +148,15 @@
                 } else {
                     w++; b.style.width = w + '%'; t.innerHTML = w + '%';
                 }
-            }, 50);
+            }, 60);
         }
 
         function finish() {
             document.body.style.animation = "none";
             document.body.innerHTML = `
                 <div style="text-align:center; color:red; z-index:10; position:relative; padding: 20px;">
-                    <h1 style="font-size:3rem;">DATA CLEARED</h1>
-                    <p style="color:white; font-size:1.2rem;">All local storage purged.</p>
+                    <h1 style="font-size:3.5rem; margin-bottom: 0;">DATA CLEARED</h1>
+                    <p style="color:white; font-size:1.3rem;">Total system purge 100% successful.</p>
                 </div>`;
             document.body.style.backgroundColor = "black";
         }
