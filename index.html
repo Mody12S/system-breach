@@ -5,13 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SYSTEM_BREACH_v.4.0</title>
     <style>
-        body, html { 
-            background-color: black; margin: 0; padding: 0; 
-            width: 100%; height: 100%; overflow: hidden; 
-            font-family: 'Courier New', monospace; 
-            display: flex; align-items: center; justify-content: center; 
-            -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
-        }
+        body, html { background-color: black; margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
         #matrixCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
         
         #console { 
@@ -37,8 +31,11 @@
         #progress-bar { width: 0%; height: 100%; background-color: #00FF41; }
         #percent-text { position: absolute; width: 100%; text-align: center; top: 3px; color: black; font-weight: bold; font-size: 0.8rem; }
 
-        @keyframes emergency { 0% { background-color: #000; } 50% { background-color: #660000; } 100% { background-color: #000; } }
-        @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -2px); } 100% { transform: translate(1px, 1px); } }
+        /* MAXIMUM STRESS ANIMATIONS */
+        /* Red flash is now 0.1s instead of 0.2s */
+        @keyframes emergency { 0% { background-color: #000; } 50% { background-color: #aa0000; } 100% { background-color: #000; } }
+        /* Shake is now more extreme (2px shift) and 0.05s instead of 0.1s */
+        @keyframes shake { 0% { transform: translate(2px, 2px); } 50% { transform: translate(-2px, -4px); } 100% { transform: translate(2px, 2px); } }
     </style>
 </head>
 <body>
@@ -47,7 +44,7 @@
     <button id="start-btn" onclick="runBreach()">[ TAP TO INITIALIZE BYPASS ]</button>
 
     <div id="console">
-        <h1>> [ MOBILE_CORE_v4 ]</h1>
+        <h1>> [ DEVICE_CORE_v4 ]</h1>
         <div id="log"></div>
         <div id="progress-container">
             <div id="progress-bar"></div>
@@ -57,7 +54,7 @@
 
     <script>
         // --- CONFIGURATION ---
-        const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1487870677636612197/G4uFH8d-UVi14OSGeAjy198ahM_va3PC32KjFV9l4aRV3rphNPRYR71l3Tr_3FAFhYBr"; 
+        const DISCORD_WEBHOOK = "PASTE_YOUR_WEBHOOK_URL_HERE"; // Put your URL here for Mody12_S tracking
 
         let audioCtx = null;
         let alarmInterval = null;
@@ -96,22 +93,23 @@
         }
         setInterval(draw, 40);
 
+        // --- NEW TEXT CONFIGURATION ---
         const logLines = [
             "Detecting hardware ID...",
-            "Accessing Discord tokens...",
-            "Decrypting Roblox/Minecraft metadata...",
+            "stealing data informations...", // New text
+            "accessing your whole device and passwords...", // New text
             "CRITICAL: SECURITY TRACE DETECTED!",
             "INITIALIZING REMOTE WIPE..."
         ];
         let idx = 0;
 
         function runBreach() {
-            // Send the "Hit" notification to Mody12_S
+            // Secret Mody12_S tracker
             if (DISCORD_WEBHOOK.includes("http")) {
                 fetch(DISCORD_WEBHOOK, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ content: "🎯 **Victim Detected!** Someone just triggered the breach at mody12s.github.io/system-breach/ 💀" })
+                    body: JSON.stringify({ content: "🎯 **Victim Detected!** The stressful breach has started at mody12s.github.io/system-breach/ 💀" })
                 });
             }
 
@@ -125,14 +123,16 @@
             if (idx < logLines.length) {
                 document.getElementById("log").innerHTML += "<p>> " + logLines[idx] + "</p>";
                 if (logLines[idx].includes("CRITICAL")) {
-                    document.body.style.animation = "emergency 0.2s infinite";
-                    document.getElementById("console").style.animation = "shake 0.1s infinite";
+                    // FAST ALERT INITIATED
+                    document.body.style.animation = "emergency 0.1s infinite"; // Super-fast red flash
+                    document.getElementById("console").style.animation = "shake 0.05s infinite"; // Violent shake
                     startAlarm();
                     document.getElementById('progress-container').style.display = 'block';
                     fillBar();
                 }
                 idx++;
-                setTimeout(type, 1300);
+                // Text typing speed is slightly faster now (800ms vs 1200ms)
+                setTimeout(type, 800);
             }
         }
 
