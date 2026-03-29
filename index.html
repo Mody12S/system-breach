@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SYSTEM_BREACH_v.4.0</title>
+    <style>
+        body {
+            background-color: black;
+            color: #00FF41; /* Classic Matrix Green */
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #console {
+            width: 80%;
+            border: 1px solid #00FF41;
+            padding: 20px;
+            background: rgba(0, 20, 0, 0.9);
+            box-shadow: 0 0 15px #00FF41;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            background-color: #00FF41;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        h1 { font-size: 1.5rem; text-shadow: 0 0 5px #00FF41; }
+    </style>
+</head>
+<body>
+
+    <div id="console">
+        <h1>> INITIALIZING EXPLOIT...</h1>
+        <p id="log"></p>
+        <span class="cursor">&nbsp;</span>
+    </div>
+
+    <script>
+        const lines = [
+            "Connecting to proxy...",
+            "Bypassing firewall...",
+            "Accessing encrypted database...",
+            "Injecting SQL payload...",
+            "CRACKING PASSWORD HASHES...",
+            "SUCCESS: Access Granted.",
+            "DOWNLOADING PRIVATE_DATA.ZIP...",
+            "WARNING: SYSTEM TRACE DETECTED!",
+            "Rerouting through secondary VPN...",
+            "Breach complete. Welcome, Admin."
+        ];
+
+        let i = 0;
+        function typeLog() {
+            if (i < lines.length) {
+                document.getElementById("log").innerHTML += "> " + lines[i] + "<br>";
