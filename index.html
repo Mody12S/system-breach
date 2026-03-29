@@ -4,66 +4,103 @@
     <meta charset="UTF-8">
     <title>SYSTEM_BREACH_v.4.0</title>
     <style>
-        body {
-            background-color: black;
-            color: #00FF41; /* Classic Matrix Green */
-            font-family: 'Courier New', Courier, monospace;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
+        body { 
+            background-color: black; 
+            color: #00FF41; 
+            font-family: 'Courier New', Courier, monospace; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0; 
+            overflow: hidden; 
+        }
+        #console { 
+            width: 80%; 
+            border: 1px solid #00FF41; 
+            padding: 20px; 
+            background: rgba(0, 20, 0, 0.9); 
+            box-shadow: 0 0 15px #00FF41; 
+            transition: all 0.1s;
+        }
+        .error-text { color: #ff0000; font-weight: bold; text-shadow: 0 0 10px red; }
+        
+        /* Shaking effect for the panic phase */
+        @keyframes shake {
+            0% { transform: translate(2px, 2px); }
+            25% { transform: translate(-2px, -3px); }
+            50% { transform: translate(3px, 2px); }
+            75% { transform: translate(-1px, -1px); }
+            100% { transform: translate(2px, 2px); }
         }
 
-        #console {
-            width: 80%;
-            border: 1px solid #00FF41;
-            padding: 20px;
-            background: rgba(0, 20, 0, 0.9);
-            box-shadow: 0 0 15px #00FF41;
+        /* Red flash effect */
+        @keyframes emergency {
+            0% { background-color: #000; }
+            50% { background-color: #550000; }
+            100% { background-color: #000; }
         }
-
-        .cursor {
-            display: inline-block;
-            width: 10px;
-            background-color: #00FF41;
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0; }
-            100% { opacity: 1; }
-        }
-
-        h1 { font-size: 1.5rem; text-shadow: 0 0 5px #00FF41; }
     </style>
 </head>
 <body>
 
-    <div id="console">
+    <div id="console" id="main-box">
         <h1>> INITIALIZING EXPLOIT...</h1>
         <p id="log"></p>
-        <span class="cursor">&nbsp;</span>
     </div>
 
     <script>
-        const lines = [
-            "Connecting to proxy...",
-            "Bypassing firewall...",
-            "Accessing encrypted database...",
-            "Injecting SQL payload...",
-            "CRACKING PASSWORD HASHES...",
-            "SUCCESS: Access Granted.",
-            "DOWNLOADING PRIVATE_DATA.ZIP...",
+        const logLines = [
+            "Connecting to remote server...",
+            "Bypassing Discord Token encryption...",
+            "Accessing C:/Users/Public/Documents...",
+            "CRACKING SYSTEM PRIVILEGES...",
+            "SUCCESS: Local Admin Access Granted.",
             "WARNING: SYSTEM TRACE DETECTED!",
-            "Rerouting through secondary VPN...",
-            "Breach complete. Welcome, Admin."
+            "Attempting to mask IP...",
+            "FAILED. EMERGENCY PROTOCOL ACTIVATED.",
+            "INITIALIZING HARD DRIVE WIPE..."
         ];
 
-        let i = 0;
-        function typeLog() {
-            if (i < lines.length) {
-                document.getElementById("log").innerHTML += "> " + lines[i] + "<br>";
+        let lineIndex = 0;
+        const logElement = document.getElementById("log");
+        const consoleBox = document.getElementById("console");
+
+        function typeEffect() {
+            if (lineIndex < logLines.length) {
+                let currentLine = logLines[lineIndex];
+                
+                // Add the text
+                logElement.innerHTML += "> " + currentLine + "<br>";
+                
+                // Trigger panic mode halfway through
+                if (currentLine.includes("WARNING")) {
+                    document.body.style.animation = "emergency 0.4s infinite";
+                    consoleBox.style.borderColor = "red";
+                    consoleBox.style.boxShadow = "0 0 30px red";
+                    consoleBox.style.animation = "shake 0.1s infinite";
+                }
+
+                lineIndex++;
+                setTimeout(typeEffect, 1000);
+            } else {
+                // The Final Scare
+                setTimeout(() => {
+                    document.body.innerHTML = `
+                        <div style="text-align:center; color:white; font-family:sans-serif; margin-top:20vh;">
+                            <h1 style="font-size: 5rem; color:red;">CRITICAL FAILURE</h1>
+                            <h2 style="color:white;">HARD DRIVE WIPE: 84% COMPLETE...</h2>
+                            <p style="font-size: 1.2rem;">Do not restart your PC. System recovery in progress.</p>
+                        </div>
+                    `;
+                    document.body.style.backgroundColor = "black";
+                    document.body.style.animation = "none";
+                }, 1500);
+            }
+        }
+
+        window.onload = typeEffect;
+    </script>
+</body>
+</html>
