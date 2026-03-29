@@ -2,113 +2,158 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SYSTEM_BREACH_v.4.0</title>
     <style>
-        body { background-color: black; margin: 0; overflow: hidden; font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; height: 100vh; }
-        #matrixCanvas { position: absolute; top: 0; left: 0; z-index: 1; }
-        #console { position: relative; z-index: 2; width: 70%; border: 2px solid #00FF41; padding: 30px; background: rgba(0, 15, 0, 0.9); box-shadow: 0 0 20px #00FF41; color: #00FF41; display: none; }
-        #start-btn { position: relative; z-index: 3; padding: 20px 40px; background: black; color: #00FF41; border: 2px solid #00FF41; cursor: pointer; font-family: 'Courier New', monospace; font-size: 1.5rem; box-shadow: 0 0 15px #00FF41; }
-        #start-btn:hover { background: #00FF41; color: black; }
+        body, html { 
+            background-color: black; 
+            margin: 0; padding: 0; 
+            width: 100%; height: 100%; 
+            overflow: hidden; 
+            font-family: 'Courier New', monospace; 
+            display: flex; align-items: center; justify-content: center; 
+            -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
+        }
+        #matrixCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
         
-        /* Progress Bar Styling */
-        #progress-container { width: 100%; border: 1px solid #00FF41; height: 30px; margin-top: 20px; position: relative; display: none; }
-        #progress-bar { width: 0%; height: 100%; background-color: #00FF41; transition: width 0.1s; }
-        #percent-text { position: absolute; width: 100%; text-align: center; top: 5px; color: black; font-weight: bold; }
+        #console { 
+            position: relative; z-index: 2; 
+            width: 90%; max-width: 600px; 
+            border: 2px solid #00FF41; 
+            padding: 20px; 
+            background: rgba(0, 10, 0, 0.95); 
+            box-shadow: 0 0 20px #00FF41; 
+            color: #00FF41; 
+            display: none;
+            box-sizing: border-box;
+        }
 
-        @keyframes emergency { 0% { background-color: #000; } 50% { background-color: #880000; } 100% { background-color: #000; } }
-        @keyframes shake { 0% { transform: translate(2px, 2px); } 50% { transform: translate(-2px, -3px); } 100% { transform: translate(2px, 2px); } }
+        #start-btn { 
+            position: relative; z-index: 3; 
+            padding: 30px 20px; width: 80%;
+            background: black; color: #00FF41; 
+            border: 3px solid #00FF41; 
+            cursor: pointer; font-size: 1.2rem; 
+            font-weight: bold; text-transform: uppercase;
+        }
+
+        h1 { font-size: 1.4rem; margin: 0 0 10px 0; }
+        p { font-size: 0.9rem; line-height: 1.4; margin: 5px 0; }
+
+        #progress-container { width: 100%; border: 1px solid #00FF41; height: 25px; margin-top: 15px; position: relative; display: none; }
+        #progress-bar { width: 0%; height: 100%; background-color: #00FF41; }
+        #percent-text { position: absolute; width: 100%; text-align: center; top: 3px; color: black; font-weight: bold; font-size: 0.8rem; }
+
+        @keyframes emergency { 0% { background-color: #000; } 50% { background-color: #660000; } 100% { background-color: #000; } }
+        @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -2px); } 100% { transform: translate(1px, 1px); } }
     </style>
 </head>
 <body>
 
     <canvas id="matrixCanvas"></canvas>
-    <button id="start-btn" onclick="runBreach()">[ INITIALIZE CORE BYPASS ]</button>
+    <button id="start-btn" onclick="runBreach()">[ TAP TO INITIALIZE BYPASS ]</button>
 
     <div id="console">
-        <h1>> [ CORE_BREACH_v4 ]</h1>
-        <p id="log"></p>
+        <h1>> [ MOBILE_CORE_v4 ]</h1>
+        <div id="log"></div>
         <div id="progress-container">
             <div id="progress-bar"></div>
             <div id="percent-text">0%</div>
         </div>
     </div>
 
-    <audio id="alarm" src="https://www.soundjay.com/buttons/beep-01a.mp3" loop></audio>
-
     <script>
-        // Matrix Rain Logic
+        let audioCtx = null;
+        let alarmInterval = null;
+
+        function startAlarm() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            alarmInterval = setInterval(() => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(900, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+            }, 300);
+        }
+
         const canvas = document.getElementById('matrixCanvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const chars = "01010101";
-        const fontSize = 16;
-        const columns = canvas.width / fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.onresize = resize; resize();
 
-        function drawMatrix() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#00FF41";
-            ctx.font = fontSize + "px monospace";
+        const chars = "01010101";
+        const fontSize = 14;
+        let drops = Array(Math.floor(canvas.width / fontSize)).fill(1);
+
+        function draw() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#00FF41"; ctx.font = fontSize + "px monospace";
             drops.forEach((y, i) => {
-                const text = chars[Math.floor(Math.random() * chars.length)];
-                ctx.fillText(text, i * fontSize, y * fontSize);
+                ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * fontSize, y * fontSize);
                 if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
                 drops[i]++;
             });
         }
-        setInterval(drawMatrix, 35);
+        setInterval(draw, 40);
 
-        // Prank Logic
-        const logLines = ["Bypassing encryption...", "Accessing local files...", "CRITICAL: SECURITY TRACE DETECTED!", "INITIALIZING DATA WIPE..."];
-        let lineIndex = 0;
+        const logLines = [
+            "Detecting mobile OS...",
+            "Accessing Discord auth tokens...",
+            "Decrypting Roblox/Minecraft data...",
+            "CRITICAL: SECURITY BREACH DETECTED!",
+            "INITIALIZING REMOTE WIPE..."
+        ];
+        let idx = 0;
 
         function runBreach() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             document.getElementById('start-btn').style.display = 'none';
             document.getElementById('console').style.display = 'block';
             type();
         }
 
         function type() {
-            if (lineIndex < logLines.length) {
-                document.getElementById("log").innerHTML += "> " + logLines[lineIndex] + "<br>";
-                if (logLines[lineIndex].includes("CRITICAL")) {
-                    document.body.style.animation = "emergency 0.3s infinite";
+            if (idx < logLines.length) {
+                document.getElementById("log").innerHTML += "<p>> " + logLines[idx] + "</p>";
+                if (logLines[idx].includes("CRITICAL")) {
+                    document.body.style.animation = "emergency 0.2s infinite";
                     document.getElementById("console").style.animation = "shake 0.1s infinite";
-                    document.getElementById("alarm").play();
-                    startProgressBar();
+                    startAlarm();
+                    document.getElementById('progress-container').style.display = 'block';
+                    fillBar();
                 }
-                lineIndex++;
-                setTimeout(type, 1500);
+                idx++;
+                setTimeout(type, 1200);
             }
         }
 
-        function startProgressBar() {
-            document.getElementById('progress-container').style.display = 'block';
-            let width = 0;
-            const bar = document.getElementById('progress-bar');
-            const text = document.getElementById('percent-text');
-            
-            const interval = setInterval(() => {
-                if (width >= 100) {
-                    clearInterval(interval);
-                    setTimeout(showFinalScreen, 500);
+        function fillBar() {
+            let w = 0;
+            const b = document.getElementById('progress-bar');
+            const t = document.getElementById('percent-text');
+            const intv = setInterval(() => {
+                if (w >= 100) {
+                    clearInterval(intv);
+                    if(alarmInterval) clearInterval(alarmInterval);
+                    finish();
                 } else {
-                    width++;
-                    bar.style.width = width + '%';
-                    text.innerHTML = width + '%';
+                    w++; b.style.width = w + '%'; t.innerHTML = w + '%';
                 }
-            }, 50); // Speed of filling
+            }, 50);
         }
 
-        function showFinalScreen() {
+        function finish() {
+            document.body.style.animation = "none";
             document.body.innerHTML = `
-                <div style="text-align:center; color:red; font-family:sans-serif; z-index:10; position:relative;">
-                    <h1 style="font-size:5rem; margin-bottom: 0;">DATA CLEARED</h1>
-                    <p style="color:white; font-size:1.5rem;">System Purge 100% Successful.</p>
+                <div style="text-align:center; color:red; z-index:10; position:relative; padding: 20px;">
+                    <h1 style="font-size:3rem;">DATA CLEARED</h1>
+                    <p style="color:white; font-size:1.2rem;">All local storage purged.</p>
                 </div>`;
             document.body.style.backgroundColor = "black";
-            document.body.style.animation = "none";
         }
     </script>
 </body>
