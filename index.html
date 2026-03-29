@@ -28,15 +28,13 @@
         }
 
         h1 { font-size: 1.5rem; margin: 0 0 10px 0; color: #ff0000; text-shadow: 0 0 10px #ff0000; }
-        p { font-weight: bold; font-size: 1rem; }
+        p { font-weight: bold; font-size: 0.9rem; margin: 5px 0; }
         #progress-container { width: 100%; border: 2px solid #00FF41; height: 30px; margin-top: 20px; position: relative; display: none; }
         #progress-bar { width: 0%; height: 100%; background-color: #00FF41; box-shadow: 0 0 10px #00FF41; }
         #percent-text { position: absolute; width: 100%; text-align: center; top: 5px; color: black; font-weight: bold; }
 
-        /* VIOLENT STRESS ANIMATIONS */
         @keyframes emergency { 0% { background-color: #000; } 50% { background-color: #ff0000; } 100% { background-color: #000; } }
         
-        /* Violent Shaking: Moves 5px in random directions very fast */
         @keyframes violent-shake {
             0% { transform: translate(0, 0); }
             10% { transform: translate(-5px, -2px); }
@@ -74,17 +72,16 @@
 
         function startAlarm() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            // Faster beep: every 150ms instead of 300ms
             alarmInterval = setInterval(() => {
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
-                osc.type = 'square'; // Sharper, more annoying sound
-                osc.frequency.setValueAtTime(1100, audioCtx.currentTime); // Higher pitch
-                gain.gain.setValueAtTime(0.07, audioCtx.currentTime);
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(1200, audioCtx.currentTime); 
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
                 osc.connect(gain); gain.connect(audioCtx.destination);
                 osc.start(); osc.stop(audioCtx.currentTime + 0.05);
-            }, 150);
+            }, 120); // Extremely rapid fire beeps
         }
 
         const canvas = document.getElementById('matrixCanvas');
@@ -109,6 +106,7 @@
 
         const logLines = [
             "Detecting hardware ID...",
+            "Local IP: 192.168.1." + Math.floor(Math.random() * 254),
             "stealing data informations...",
             "accessing your whole device and passwords...",
             "CRITICAL: SECURITY TRACE DETECTED!",
@@ -117,13 +115,11 @@
         let idx = 0;
 
         function runBreach() {
-            if (DISCORD_WEBHOOK.includes("http")) {
-                fetch(DISCORD_WEBHOOK, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ content: "⚠️ **Mody12_S:** Someone just triggered the violent glitch breach! 💀" })
-                });
-            }
+            fetch(DISCORD_WEBHOOK, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ content: "🚨 **Mody12_S Tracker:** Target has initiated the breach sequence! 💀" })
+            }).catch(e => console.log("Webhook error"));
 
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             document.getElementById('start-btn').style.display = 'none';
@@ -136,13 +132,13 @@
                 document.getElementById("log").innerHTML += "<p>> " + logLines[idx] + "</p>";
                 if (logLines[idx].includes("CRITICAL")) {
                     document.body.style.animation = "emergency 0.1s infinite"; 
-                    document.getElementById("console").style.animation = "violent-shake 0.05s infinite"; 
+                    document.getElementById("console").style.animation = "violent-shake 0.04s infinite"; 
                     startAlarm();
                     document.getElementById('progress-container').style.display = 'block';
                     fillBar();
                 }
                 idx++;
-                setTimeout(type, 700); // Faster typing
+                setTimeout(type, 650); 
             }
         }
 
@@ -156,17 +152,17 @@
                     if(alarmInterval) clearInterval(alarmInterval);
                     finish();
                 } else {
-                    w += 2; // Fills even faster
+                    w += 2;
                     if(w > 100) w = 100;
                     b.style.width = w + '%'; t.innerHTML = w + '%';
                 }
-            }, 40);
+            }, 35); // Progress bar moves very fast
         }
 
         function finish() {
             document.body.style.animation = "none";
             document.body.innerHTML = `
-                <div style="text-align:center; color:red; z-index:10; position:relative; padding: 20px; animation: violent-shake 0.1s infinite;">
+                <div style="text-align:center; color:red; z-index:10; position:relative; padding: 20px;">
                     <h1 style="font-size:3.5rem; margin-bottom: 0;">DATA CLEARED</h1>
                     <p style="color:white; font-size:1.3rem;">Total system purge 100% successful.</p>
                 </div>`;
