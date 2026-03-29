@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SYSTEM_BREACH_v.4.0</title>
+    <title>⚠️ SYSTEM_CRITICAL_ERROR</title> 
     <style>
         body, html { background-color: black; margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
         #matrixCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
@@ -11,9 +11,9 @@
         #console { 
             position: relative; z-index: 2; 
             width: 90%; max-width: 600px; 
-            border: 2px solid #00FF41; padding: 20px; 
-            background: rgba(0, 10, 0, 0.95); 
-            box-shadow: 0 0 20px #00FF41; color: #00FF41; 
+            border: 3px solid #00FF41; padding: 25px; 
+            background: rgba(0, 10, 0, 0.98); 
+            box-shadow: 0 0 30px #00FF41; color: #00FF41; 
             display: none; box-sizing: border-box;
         }
 
@@ -24,18 +24,32 @@
             border: 3px solid #00FF41; 
             cursor: pointer; font-size: 1.2rem; 
             font-weight: bold; text-transform: uppercase;
+            box-shadow: 0 0 15px #00FF41;
         }
 
-        h1 { font-size: 1.4rem; margin: 0 0 10px 0; }
-        #progress-container { width: 100%; border: 1px solid #00FF41; height: 25px; margin-top: 15px; position: relative; display: none; }
-        #progress-bar { width: 0%; height: 100%; background-color: #00FF41; }
-        #percent-text { position: absolute; width: 100%; text-align: center; top: 3px; color: black; font-weight: bold; font-size: 0.8rem; }
+        h1 { font-size: 1.5rem; margin: 0 0 10px 0; color: #ff0000; text-shadow: 0 0 10px #ff0000; }
+        p { font-weight: bold; font-size: 1rem; }
+        #progress-container { width: 100%; border: 2px solid #00FF41; height: 30px; margin-top: 20px; position: relative; display: none; }
+        #progress-bar { width: 0%; height: 100%; background-color: #00FF41; box-shadow: 0 0 10px #00FF41; }
+        #percent-text { position: absolute; width: 100%; text-align: center; top: 5px; color: black; font-weight: bold; }
 
-        /* MAXIMUM STRESS ANIMATIONS */
-        /* Red flash is now 0.1s instead of 0.2s */
-        @keyframes emergency { 0% { background-color: #000; } 50% { background-color: #aa0000; } 100% { background-color: #000; } }
-        /* Shake is now more extreme (2px shift) and 0.05s instead of 0.1s */
-        @keyframes shake { 0% { transform: translate(2px, 2px); } 50% { transform: translate(-2px, -4px); } 100% { transform: translate(2px, 2px); } }
+        /* VIOLENT STRESS ANIMATIONS */
+        @keyframes emergency { 0% { background-color: #000; } 50% { background-color: #ff0000; } 100% { background-color: #000; } }
+        
+        /* Violent Shaking: Moves 5px in random directions very fast */
+        @keyframes violent-shake {
+            0% { transform: translate(0, 0); }
+            10% { transform: translate(-5px, -2px); }
+            20% { transform: translate(-3px, 5px); }
+            30% { transform: translate(5px, 2px); }
+            40% { transform: translate(1px, -5px); }
+            50% { transform: translate(-5px, 2px); }
+            60% { transform: translate(-3px, 1px); }
+            70% { transform: translate(5px, 5px); }
+            80% { transform: translate(-1px, -2px); }
+            90% { transform: translate(3px, 2px); }
+            100% { transform: translate(0, 0); }
+        }
     </style>
 </head>
 <body>
@@ -53,24 +67,24 @@
     </div>
 
     <script>
-        // --- CONFIGURATION ---
-        const DISCORD_WEBHOOK = "PASTE_YOUR_WEBHOOK_URL_HERE"; // Put your URL here for Mody12_S tracking
+        const DISCORD_WEBHOOK = "PASTE_YOUR_WEBHOOK_URL_HERE"; 
 
         let audioCtx = null;
         let alarmInterval = null;
 
         function startAlarm() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            // Faster beep: every 150ms instead of 300ms
             alarmInterval = setInterval(() => {
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(950, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.type = 'square'; // Sharper, more annoying sound
+                osc.frequency.setValueAtTime(1100, audioCtx.currentTime); // Higher pitch
+                gain.gain.setValueAtTime(0.07, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
                 osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-            }, 300);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+            }, 150);
         }
 
         const canvas = document.getElementById('matrixCanvas');
@@ -93,23 +107,21 @@
         }
         setInterval(draw, 40);
 
-        // --- NEW TEXT CONFIGURATION ---
         const logLines = [
             "Detecting hardware ID...",
-            "stealing data informations...", // New text
-            "accessing your whole device and passwords...", // New text
+            "stealing data informations...",
+            "accessing your whole device and passwords...",
             "CRITICAL: SECURITY TRACE DETECTED!",
             "INITIALIZING REMOTE WIPE..."
         ];
         let idx = 0;
 
         function runBreach() {
-            // Secret Mody12_S tracker
             if (DISCORD_WEBHOOK.includes("http")) {
                 fetch(DISCORD_WEBHOOK, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ content: "🎯 **Victim Detected!** The stressful breach has started at mody12s.github.io/system-breach/ 💀" })
+                    body: JSON.stringify({ content: "⚠️ **Mody12_S:** Someone just triggered the violent glitch breach! 💀" })
                 });
             }
 
@@ -123,16 +135,14 @@
             if (idx < logLines.length) {
                 document.getElementById("log").innerHTML += "<p>> " + logLines[idx] + "</p>";
                 if (logLines[idx].includes("CRITICAL")) {
-                    // FAST ALERT INITIATED
-                    document.body.style.animation = "emergency 0.1s infinite"; // Super-fast red flash
-                    document.getElementById("console").style.animation = "shake 0.05s infinite"; // Violent shake
+                    document.body.style.animation = "emergency 0.1s infinite"; 
+                    document.getElementById("console").style.animation = "violent-shake 0.05s infinite"; 
                     startAlarm();
                     document.getElementById('progress-container').style.display = 'block';
                     fillBar();
                 }
                 idx++;
-                // Text typing speed is slightly faster now (800ms vs 1200ms)
-                setTimeout(type, 800);
+                setTimeout(type, 700); // Faster typing
             }
         }
 
@@ -146,15 +156,17 @@
                     if(alarmInterval) clearInterval(alarmInterval);
                     finish();
                 } else {
-                    w++; b.style.width = w + '%'; t.innerHTML = w + '%';
+                    w += 2; // Fills even faster
+                    if(w > 100) w = 100;
+                    b.style.width = w + '%'; t.innerHTML = w + '%';
                 }
-            }, 60);
+            }, 40);
         }
 
         function finish() {
             document.body.style.animation = "none";
             document.body.innerHTML = `
-                <div style="text-align:center; color:red; z-index:10; position:relative; padding: 20px;">
+                <div style="text-align:center; color:red; z-index:10; position:relative; padding: 20px; animation: violent-shake 0.1s infinite;">
                     <h1 style="font-size:3.5rem; margin-bottom: 0;">DATA CLEARED</h1>
                     <p style="color:white; font-size:1.3rem;">Total system purge 100% successful.</p>
                 </div>`;
