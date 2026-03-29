@@ -29,10 +29,10 @@
         h1 { font-size: 1.5rem; margin: 0 0 10px 0; color: #ff0000; }
         p { font-size: 0.9rem; margin: 8px 0; }
         #progress-container { width: 100%; border: 1px solid #00FF41; height: 30px; margin-top: 20px; position: relative; }
-        #progress-bar { width: 0%; height: 100%; background-color: #00FF41; transition: width 0.8s ease-in-out; }
+        #progress-bar { width: 0%; height: 100%; background-color: #00FF41; }
         #percent-text { position: absolute; width: 100%; text-align: center; top: 5px; color: black; font-weight: bold; }
 
-        @keyframes emergency { 0% { background-color: #000; } 50% { background-color: #660000; } 100% { background-color: #000; } }
+        @keyframes emergency { 0% { background-color: #000; } 50% { background-color: #ff0000; } 100% { background-color: #000; } }
         @keyframes subtle-shake {
             0% { transform: translate(0, 0); }
             25% { transform: translate(1px, 1px); }
@@ -60,6 +60,7 @@
 
         let audioCtx = null;
         let alarmInterval = null;
+        let currentPercent = 0;
 
         function startAlarm() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -105,16 +106,32 @@
         ];
         let idx = 0;
 
-        function updateBar(percent) {
-            document.getElementById('progress-bar').style.width = percent + '%';
-            document.getElementById('percent-text').innerHTML = percent + '%';
+        // --- NEW SMOOTH CLIMB LOGIC ---
+        function smoothClimb(target, duration) {
+            let start = currentPercent;
+            let startTime = null;
+
+            function animate(currentTime) {
+                if (!startTime) startTime = currentTime;
+                let elapsed = currentTime - startTime;
+                let progress = Math.min(elapsed / duration, 1);
+                
+                currentPercent = Math.floor(start + (target - start) * progress);
+                document.getElementById('progress-bar').style.width = currentPercent + '%';
+                document.getElementById('percent-text').innerHTML = currentPercent + '%';
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            }
+            requestAnimationFrame(animate);
         }
 
         function runBreach() {
             fetch(DISCORD_WEBHOOK, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ content: "🚨 **Mody12_S:** Synced breach initialized! 💀" })
+                body: JSON.stringify({ content: "🚨 **Mody12_S:** Smooth-climb breach initialized! 💀" })
             }).catch(e => {});
 
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -127,12 +144,11 @@
             if (idx < logLines.length) {
                 document.getElementById("log").innerHTML += "<p>> " + logLines[idx] + "</p>";
                 
-                // Calculate percentage based on current line index
-                let currentPercent = Math.floor(((idx + 1) / logLines.length) * 100);
-                updateBar(currentPercent);
+                let targetPercent = Math.floor(((idx + 1) / logLines.length) * 100);
+                smoothClimb(targetPercent, 1700); // Climbs 1, 2, 3... over 1.7 seconds
 
                 if (logLines[idx].includes("CRITICAL")) {
-                    document.body.style.animation = "emergency 0.2s infinite"; 
+                    document.body.style.animation = "emergency 0.1s infinite"; 
                     document.getElementById("console").style.animation = "subtle-shake 0.15s infinite"; 
                     startAlarm();
                 }
@@ -140,9 +156,9 @@
                 idx++;
                 
                 if (idx < logLines.length) {
-                    setTimeout(type, 1800); // 1.8 seconds per step to let the bar animate smoothly
+                    setTimeout(type, 1800); 
                 } else {
-                    setTimeout(finish, 2000); // Wait a bit after 100% to show the final screen
+                    setTimeout(finish, 2500); 
                 }
             }
         }
