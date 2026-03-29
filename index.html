@@ -29,28 +29,36 @@
         h1 { font-size: 1.5rem; margin: 0 0 10px 0; color: #ff0000; }
         p { font-size: 0.9rem; margin: 8px 0; }
         
-        /* 🛠️ IMPROVED PROGRESS BAR 🛠️ */
+        /* 🛠️ FIXED PROGRESS BAR 🛠️ */
         #progress-container { 
-            width: 100%; border: 1px solid #00FF41; height: 35px; 
+            width: 100%; border: 1px solid #00FF41; height: 40px; 
             margin-top: 20px; position: relative; overflow: hidden; 
             background: black;
         }
+        
         #progress-bar { 
             width: 0%; height: 100%; background-color: #00FF41; 
             position: absolute; left: 0; top: 0; z-index: 4;
-        }
-        
-        /* The text that shows when the bar is empty (Green) */
-        #percent-text-base { 
-            position: absolute; width: 100%; text-align: center; top: 7px; 
-            color: #00FF41; font-weight: bold; font-size: 1.1rem; z-index: 3;
+            overflow: hidden; 
         }
 
-        /* The text that shows inside the moving bar (Black) */
+        .percent-text { 
+            position: absolute; 
+            width: 100%; 
+            left: 0; top: 10px; 
+            text-align: center; 
+            font-weight: bold; 
+            font-size: 1.2rem;
+            white-space: nowrap;
+        }
+
+        #percent-text-base { color: #00FF41; z-index: 3; }
         #percent-text-overlay { 
-            position: absolute; width: 600px; /* Match max-width of console */
-            text-align: center; top: 7px; 
-            color: black; font-weight: bold; font-size: 1.1rem; z-index: 5;
+            color: black; z-index: 5; 
+            width: 100%; /* Important: Force it to stay relative to container */
+            position: fixed; /* Keep it locked to the console window */
+            left: 50%; transform: translateX(-50%);
+            max-width: 600px;
         }
 
         @keyframes emergency { 0% { background-color: #000; } 50% { background-color: #ff0000; } 100% { background-color: #000; } }
@@ -66,9 +74,9 @@
         <h1>> [ DEVICE_CORE_v4 ]</h1>
         <div id="log"></div>
         <div id="progress-container">
-            <div id="percent-text-base">0%</div>
+            <div id="percent-text-base" class="percent-text">0%</div>
             <div id="progress-bar">
-                <div id="percent-text-overlay">0%</div>
+                <div id="percent-text-overlay" class="percent-text">0%</div>
             </div>
         </div>
     </div>
