@@ -29,15 +29,28 @@
         h1 { font-size: 1.5rem; margin: 0 0 10px 0; color: #ff0000; }
         p { font-size: 0.9rem; margin: 8px 0; }
         
-        #progress-container { width: 100%; border: 1px solid #00FF41; height: 35px; margin-top: 20px; position: relative; overflow: hidden; }
-        #progress-bar { width: 0%; height: 100%; background-color: #00FF41; }
+        /* 🛠️ IMPROVED PROGRESS BAR 🛠️ */
+        #progress-container { 
+            width: 100%; border: 1px solid #00FF41; height: 35px; 
+            margin-top: 20px; position: relative; overflow: hidden; 
+            background: black;
+        }
+        #progress-bar { 
+            width: 0%; height: 100%; background-color: #00FF41; 
+            position: absolute; left: 0; top: 0; z-index: 4;
+        }
         
-        /* ⚡ BLINKING INVERT EFFECT ⚡ */
-        #percent-text { 
+        /* The text that shows when the bar is empty (Green) */
+        #percent-text-base { 
             position: absolute; width: 100%; text-align: center; top: 7px; 
-            color: #00FF41; font-weight: bold; font-size: 1.1rem;
-            mix-blend-mode: difference; /* This makes it flip colors based on what's behind it */
-            z-index: 5;
+            color: #00FF41; font-weight: bold; font-size: 1.1rem; z-index: 3;
+        }
+
+        /* The text that shows inside the moving bar (Black) */
+        #percent-text-overlay { 
+            position: absolute; width: 600px; /* Match max-width of console */
+            text-align: center; top: 7px; 
+            color: black; font-weight: bold; font-size: 1.1rem; z-index: 5;
         }
 
         @keyframes emergency { 0% { background-color: #000; } 50% { background-color: #ff0000; } 100% { background-color: #000; } }
@@ -53,8 +66,10 @@
         <h1>> [ DEVICE_CORE_v4 ]</h1>
         <div id="log"></div>
         <div id="progress-container">
-            <div id="progress-bar"></div>
-            <div id="percent-text">0%</div>
+            <div id="percent-text-base">0%</div>
+            <div id="progress-bar">
+                <div id="percent-text-overlay">0%</div>
+            </div>
         </div>
     </div>
 
@@ -76,11 +91,9 @@
             if (alarmTriggered) return;
             alarmTriggered = true;
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            
             document.body.style.animation = "emergency 0.1s infinite"; 
             document.getElementById("console").style.animation = "subtle-glitch 0.2s infinite"; 
             matrixColor = "#FF0000";
-
             alarmInterval = setInterval(() => {
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
@@ -117,10 +130,10 @@
                 currentPercent = Math.floor(start + (target - start) * progress);
                 
                 document.getElementById('progress-bar').style.width = currentPercent + '%';
-                document.getElementById('percent-text').innerHTML = currentPercent + '%';
+                document.getElementById('percent-text-base').innerHTML = currentPercent + '%';
+                document.getElementById('percent-text-overlay').innerHTML = currentPercent + '%';
 
                 if (currentPercent >= 38) { startAlarm(); }
-
                 if (progress < 1) requestAnimationFrame(animate);
             }
             requestAnimationFrame(animate);
