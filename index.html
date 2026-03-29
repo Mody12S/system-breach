@@ -11,9 +11,9 @@
         #console { 
             position: relative; z-index: 2; 
             width: 90%; max-width: 600px; 
-            border: 3px solid #00FF41; padding: 25px; 
+            border: 2px solid #00FF41; padding: 25px; 
             background: rgba(0, 10, 0, 0.98); 
-            box-shadow: 0 0 30px #00FF41; color: #00FF41; 
+            box-shadow: 0 0 20px #00FF41; color: #00FF41; 
             display: none; box-sizing: border-box;
         }
 
@@ -21,31 +21,25 @@
             position: relative; z-index: 3; 
             padding: 30px 20px; width: 80%;
             background: black; color: #00FF41; 
-            border: 3px solid #00FF41; 
+            border: 2px solid #00FF41; 
             cursor: pointer; font-size: 1.2rem; 
             font-weight: bold; text-transform: uppercase;
-            box-shadow: 0 0 15px #00FF41;
         }
 
-        h1 { font-size: 1.5rem; margin: 0 0 10px 0; color: #ff0000; text-shadow: 0 0 10px #ff0000; }
-        p { font-weight: bold; font-size: 0.9rem; margin: 5px 0; }
-        #progress-container { width: 100%; border: 2px solid #00FF41; height: 30px; margin-top: 20px; position: relative; display: none; }
-        #progress-bar { width: 0%; height: 100%; background-color: #00FF41; box-shadow: 0 0 10px #00FF41; }
+        h1 { font-size: 1.5rem; margin: 0 0 10px 0; color: #ff0000; }
+        p { font-size: 0.9rem; margin: 8px 0; }
+        #progress-container { width: 100%; border: 1px solid #00FF41; height: 30px; margin-top: 20px; position: relative; display: none; }
+        #progress-bar { width: 0%; height: 100%; background-color: #00FF41; }
         #percent-text { position: absolute; width: 100%; text-align: center; top: 5px; color: black; font-weight: bold; }
 
-        @keyframes emergency { 0% { background-color: #000; } 50% { background-color: #ff0000; } 100% { background-color: #000; } }
+        @keyframes emergency { 0% { background-color: #000; } 50% { background-color: #660000; } 100% { background-color: #000; } }
         
-        @keyframes violent-shake {
+        /* Subtler shake: reduced from 5px to 2px */
+        @keyframes subtle-shake {
             0% { transform: translate(0, 0); }
-            10% { transform: translate(-5px, -2px); }
-            20% { transform: translate(-3px, 5px); }
-            30% { transform: translate(5px, 2px); }
-            40% { transform: translate(1px, -5px); }
-            50% { transform: translate(-5px, 2px); }
-            60% { transform: translate(-3px, 1px); }
-            70% { transform: translate(5px, 5px); }
-            80% { transform: translate(-1px, -2px); }
-            90% { transform: translate(3px, 2px); }
+            25% { transform: translate(2px, 1px); }
+            50% { transform: translate(-1px, -2px); }
+            75% { transform: translate(-2px, 1px); }
             100% { transform: translate(0, 0); }
         }
     </style>
@@ -72,16 +66,17 @@
 
         function startAlarm() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            // Fast Sound: 120ms beeps
             alarmInterval = setInterval(() => {
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = 'square';
-                osc.frequency.setValueAtTime(1200, audioCtx.currentTime); 
-                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(1100, audioCtx.currentTime); 
+                gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
                 osc.connect(gain); gain.connect(audioCtx.destination);
                 osc.start(); osc.stop(audioCtx.currentTime + 0.05);
-            }, 120); // Extremely rapid fire beeps
+            }, 120); 
         }
 
         const canvas = document.getElementById('matrixCanvas');
@@ -102,7 +97,7 @@
                 drops[i]++;
             });
         }
-        setInterval(draw, 40);
+        setInterval(draw, 45);
 
         const logLines = [
             "Detecting hardware ID...",
@@ -118,8 +113,8 @@
             fetch(DISCORD_WEBHOOK, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ content: "🚨 **Mody12_S Tracker:** Target has initiated the breach sequence! 💀" })
-            }).catch(e => console.log("Webhook error"));
+                body: JSON.stringify({ content: "🚨 **Mody12_S Tracker:** Target has initiated the slow-burn breach! 💀" })
+            }).catch(e => {});
 
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             document.getElementById('start-btn').style.display = 'none';
@@ -131,14 +126,15 @@
             if (idx < logLines.length) {
                 document.getElementById("log").innerHTML += "<p>> " + logLines[idx] + "</p>";
                 if (logLines[idx].includes("CRITICAL")) {
-                    document.body.style.animation = "emergency 0.1s infinite"; 
-                    document.getElementById("console").style.animation = "violent-shake 0.04s infinite"; 
+                    document.body.style.animation = "emergency 0.2s infinite"; 
+                    document.getElementById("console").style.animation = "subtle-shake 0.15s infinite"; 
                     startAlarm();
                     document.getElementById('progress-container').style.display = 'block';
                     fillBar();
                 }
                 idx++;
-                setTimeout(type, 650); 
+                // SLOWER typing: 1.5 seconds per line
+                setTimeout(type, 1500); 
             }
         }
 
@@ -152,11 +148,10 @@
                     if(alarmInterval) clearInterval(alarmInterval);
                     finish();
                 } else {
-                    w += 2;
-                    if(w > 100) w = 100;
+                    w += 1; // Fills 1% at a time (slower)
                     b.style.width = w + '%'; t.innerHTML = w + '%';
                 }
-            }, 35); // Progress bar moves very fast
+            }, 80); // Slower progress (80ms per tick)
         }
 
         function finish() {
